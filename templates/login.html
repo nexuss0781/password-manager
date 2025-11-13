@@ -27,10 +27,12 @@
         <!-- Step 3: Puzzle -->
         <div id="puzzle-step" class="login-step">
             <h2>Step 3: Solve the Puzzle</h2>
-            <p id="puzzle-instruction">Click inside the puzzle area to reveal the final button.</p>
-            <div id="puzzle-container" title="Click me">
-                <!-- A real puzzle would go here. For now, it's a clickable area. -->
-                🧩
+            <p id="puzzle-instruction">Grab and solve the puzzle to open.</p>
+            <div id="puzzle-container" title="Puzzle">
+                <div class="piece" data-index="0" draggable="true"></div>
+                <div class="piece" data-index="1" draggable="true"></div>
+                <div class="piece" data-index="2" draggable="true"></div>
+                <div class="piece" data-index="3" draggable="true"></div>
             </div>
             <button id="hidden-submit" class="form-button" onclick="finalLogin()">Submit</button>
         </div>
