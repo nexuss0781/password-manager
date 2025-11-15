@@ -102,16 +102,7 @@ def delete(entry_id):
     conn.close()
     return redirect(url_for('dashboard'))
 
-# --- Route for Handling PIN on Refresh ---
-@app.route('/verify_pin_refresh', methods=['POST'])
-def verify_pin_refresh():
-    submitted_pin = request.form['pin']
-    if submitted_pin == '078123':
-        session['pin_verified'] = True # Re-verify the PIN for this session
-        return redirect(url_for('dashboard'))
-    else:
-        # If the PIN is wrong, log them out for security
-        return redirect(url_for('logout'))
+
 
 
 if __name__ == '__main__':
