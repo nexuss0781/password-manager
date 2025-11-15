@@ -1,5 +1,5 @@
 import sqlite3
-from flask import Flask, render_template, session, redirect, url_for, request
+from flask import Flask, render_template, session, redirect, url_for, request, jsonify
 
 app = Flask(__name__)
 app.secret_key = 'your_super_secret_and_random_key'
@@ -32,8 +32,12 @@ def login():
         if user:
             session['user_authenticated'] = True
             session['user_pin'] = user['pin'] # Store the user's PIN in the session
+            if request.is_json: # Check if it's an AJAX request
+                return jsonify({'success': True})
             return redirect(url_for('dashboard'))
         else:
+            if request.is_json: # Check if it's an AJAX request
+                return jsonify({'success': False, 'message': 'Invalid credentials'})
             return render_template('login.html', error='Invalid credentials')
     return render_template('login.html')
 
@@ -69,9 +73,16 @@ def verify_pin_refresh():
         session['pin_verified'] = True # Re-verify the PIN for this session
         return redirect(url_for('dashboard'))
     else:
-        # If the PIN is wrong, log them out for security
-        session.clear()
-        return redirect(url_for('login'))
+        # If the PIN is wrong, render the pin_refresh.html with an error message
+        return render_template('pin_refresh.html', error='Invalid PIN')
+
+@app.route('/verify_login_pin', methods=['POST'])
+def verify_login_pin():
+    submitted_pin = request.form.get('pin')
+    if session.get('user_pin') and submitted_pin == session['user_pin']:
+        session['pin_verified'] = True
+        return jsonify({'success': True})
+    return jsonify({'success': False, 'message': 'Invalid PIN'})
 
 
 

@@ -459,3 +459,12 @@ form {
 .login-step.active {
     display: block;
 }
+
+.error-message {
+    color: var(--error-color);
+    font-weight: 600;
+    margin-top: -20px;
+    margin-bottom: 20px;
+    font-size: 1.05rem;
+    display: none; /* Hidden by default, shown by JS */
+}

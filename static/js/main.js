@@ -1,27 +1,71 @@
+// Helper function to display errors
+function displayError(elementId, message) {
+    const errorElement = document.getElementById(elementId);
+    errorElement.textContent = message;
+    errorElement.style.display = 'block';
+}
+
+// Helper function to clear errors
+function clearError(elementId) {
+    const errorElement = document.getElementById(elementId);
+    errorElement.textContent = '';
+    errorElement.style.display = 'none';
+}
+
 // --- Step 1: PIN Verification ---
-function verifyPin() {
+async function verifyPin() {
+    clearError('pin-error');
     const pinInput = document.getElementById('pin').value;
-    // In a real application, you would send this PIN to the server for verification.
-    // For this example, we'll assume the server-side Flask app handles the actual PIN verification.
-    // This client-side JS is primarily for UI flow.
-    
-    // For now, we'll just proceed to the next step.
-    // The actual PIN verification will happen on the server when the user submits the form.
-    document.getElementById('pin-step').classList.remove('active');
-    document.getElementById('password-step').classList.add('active');
+
+    try {
+        const response = await fetch('/verify_login_pin', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `pin=${pinInput}`
+        });
+        const data = await response.json();
+
+        if (data.success) {
+            document.getElementById('pin-step').classList.remove('active');
+            document.getElementById('password-step').classList.add('active');
+        } else {
+            displayError('pin-error', data.message || 'Invalid PIN');
+        }
+    } catch (error) {
+        console.error('Error during PIN verification:', error);
+        displayError('pin-error', 'An unexpected error occurred.');
+    }
 }
 
 // --- Step 2: Password Verification ---
-function verifyPassword() {
-    // In a real application, you would send this password to the server for verification.
-    // For this example, we'll assume the server-side Flask app handles the actual password verification.
-    // This client-side JS is primarily for UI flow.
-    
-    // For now, we'll just proceed to the next step.
-    // The actual password verification will happen on the server when the user submits the form.
-    document.getElementById('password-step').classList.remove('active');
-    document.getElementById('puzzle-step').classList.add('active');
-    initializePuzzle();
+async function verifyPassword() {
+    clearError('password-error');
+    const usernameInput = document.getElementById('username').value;
+    const passwordInput = document.getElementById('password').value;
+
+    try {
+        const response = await fetch('/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json', // Indicate JSON content for Flask
+            },
+            body: JSON.stringify({ username: usernameInput, password: passwordInput })
+        });
+        const data = await response.json();
+
+        if (data.success) {
+            document.getElementById('password-step').classList.remove('active');
+            document.getElementById('puzzle-step').classList.add('active');
+            initializePuzzle();
+        } else {
+            displayError('password-error', data.message || 'Invalid credentials');
+        }
+    } catch (error) {
+        console.error('Error during password verification:', error);
+        displayError('password-error', 'An unexpected error occurred.');
+    }
 }
 
 let puzzleClickedCount = 0;
