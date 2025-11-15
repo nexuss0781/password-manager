@@ -8,6 +8,12 @@ conn = sqlite3.connect('passwords.db')
 # Create a cursor object to execute SQL commands
 cursor = conn.cursor()
 
+# Drop tables if they exist to ensure a clean setup
+cursor.execute("DROP TABLE IF EXISTS passwords;")
+cursor.execute("DROP TABLE IF EXISTS users;")
+
+print("Existing tables dropped (if they existed).")
+
 # SQL command to create a table named 'passwords'
 # This table will store an ID, the name of the service (e.g., "Google"),
 # and the actual password for that service.
