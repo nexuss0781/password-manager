@@ -41,7 +41,7 @@ print("Table 'users' created successfully (if it didn't exist).")
 cursor.execute("SELECT * FROM users WHERE username = 'admin'")
 if cursor.fetchone() is None:
     # Insert a default admin user
-    cursor.execute("INSERT INTO users (username, password, pin) VALUES (?, ?, ?)", ('admin', 'password', '123456'))
+    cursor.execute("INSERT INTO users (username, password, pin) VALUES (?, ?, ?)", ('admin', 'password', '078123'))
     print("Default admin user created.")
 
 
