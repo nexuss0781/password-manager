@@ -1,29 +1,27 @@
 // --- Step 1: PIN Verification ---
 function verifyPin() {
     const pinInput = document.getElementById('pin').value;
-    const correctPin = '078123';
-
-    if (pinInput === correctPin) {
-        // Hide the current step and show the next one
-        document.getElementById('pin-step').classList.remove('active');
-        document.getElementById('password-step').classList.add('active');
-    } else {
-        alert('Incorrect PIN. Please try again.');
-    }
+    // In a real application, you would send this PIN to the server for verification.
+    // For this example, we'll assume the server-side Flask app handles the actual PIN verification.
+    // This client-side JS is primarily for UI flow.
+    
+    // For now, we'll just proceed to the next step.
+    // The actual PIN verification will happen on the server when the user submits the form.
+    document.getElementById('pin-step').classList.remove('active');
+    document.getElementById('password-step').classList.add('active');
 }
 
 // --- Step 2: Password Verification ---
 function verifyPassword() {
-    const passwordInput = document.getElementById('password').value;
-    const correctPassword = 'classicboy0781';
-
-    if (passwordInput === correctPassword) {
-        document.getElementById('password-step').classList.remove('active');
-        document.getElementById('puzzle-step').classList.add('active');
-        initializePuzzle();
-    } else {
-        alert('Incorrect Password. Please try again.');
-    }
+    // In a real application, you would send this password to the server for verification.
+    // For this example, we'll assume the server-side Flask app handles the actual password verification.
+    // This client-side JS is primarily for UI flow.
+    
+    // For now, we'll just proceed to the next step.
+    // The actual password verification will happen on the server when the user submits the form.
+    document.getElementById('password-step').classList.remove('active');
+    document.getElementById('puzzle-step').classList.add('active');
+    initializePuzzle();
 }
 
 let puzzleClickedCount = 0;

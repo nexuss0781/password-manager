@@ -3,18 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verify Access</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='CSS/pin.css') }}">
+    <title>Verify PIN</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pin.css') }}">
 </head>
 <body>
     <div class="login-container">
-        <h2>Session Active</h2>
-        <p>For your security, please re-enter your PIN to continue.</p>
-        <form action="{{ url_for('verify_pin_refresh') }}" method="post">
+        <h2>Verify PIN</h2>
+        <p>Please enter your PIN to continue.</p>
+        <form action="/verify_pin_refresh" method="post">
             <input type="password" name="pin" class="form-input" placeholder="PIN" maxlength="6" required>
-            <button type="submit" class="form-button">Unlock</button>
+            <button type="submit" class="form-button">Verify</button>
         </form>
-        <a href="/logout" class="logout-link">Not you? Logout</a>
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
     </div>
 </body>
 </html>

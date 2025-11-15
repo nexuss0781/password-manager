@@ -17,18 +17,35 @@ def home():
     if 'user_authenticated' in session:
         # If the session exists, ask for PIN verification instead of a full login
         return render_template('pin_refresh.html')
+    return redirect(url_for('login'))
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+
+        conn = get_db_connection()
+        user = conn.execute('SELECT * FROM users WHERE username = ? AND password = ?', (username, password)).fetchone()
+        conn.close()
+
+        if user:
+            session['user_authenticated'] = True
+            session['user_pin'] = user['pin'] # Store the user's PIN in the session
+            return redirect(url_for('dashboard'))
+        else:
+            return render_template('login.html', error='Invalid credentials')
     return render_template('login.html')
 
 @app.route('/login_success')
 def login_success():
-    session['user_authenticated'] = True
     session['pin_verified'] = True # Mark that the PIN was just verified
     return redirect(url_for('dashboard'))
 
 @app.route('/logout')
 def logout():
     session.clear() # Clear all session data
-    return redirect(url_for('home'))
+    return redirect(url_for('login'))
 
 # --- New/Updated Routes for Functionality ---
 @app.route('/dashboard')
@@ -44,6 +61,19 @@ def dashboard():
 
     # Pass the list of passwords to the template
     return render_template('dashboard.html', passwords=passwords)
+
+@app.route('/verify_pin_refresh', methods=['POST'])
+def verify_pin_refresh():
+    submitted_pin = request.form['pin']
+    if session.get('user_pin') and submitted_pin == session['user_pin']:
+        session['pin_verified'] = True # Re-verify the PIN for this session
+        return redirect(url_for('dashboard'))
+    else:
+        # If the PIN is wrong, log them out for security
+        session.clear()
+        return redirect(url_for('login'))
+
+
 
 @app.route('/add_password', methods=['POST'])
 def add_password():
