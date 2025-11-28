@@ -18,6 +18,17 @@ A modern, secure web-based file management system that allows users to remotely 
 - 📱 **Responsive Design** - Works seamlessly on desktop and mobile devices
 - 🌐 **REST API** - Full-featured API for programmatic access
 
+## 📸 Screenshots
+
+### Dashboard
+![Dashboard](screenshots/dashboard.png)
+
+### Login Page
+![Login Page](screenshots/login.png)
+
+### Easy Installation Page
+![Installation Page](screenshots/install.png)
+
 ## 🛠️ Tech Stack
 
 - **Backend**: Python, Flask, SQLAlchemy
