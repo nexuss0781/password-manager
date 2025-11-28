@@ -1,88 +1,99 @@
-import sqlite3
-from flask import Flask, render_template, session, redirect, url_for, request
+from flask import Flask, render_template, redirect, url_for, session, send_file, request
+from flask_jwt_extended import JWTManager
+from flask_cors import CORS
+from config import Config
+from models import db
+from auth import auth_bp, login_required
+from file_manager import file_manager_bp
+import os
 
-app = Flask(__name__)
-app.secret_key = 'your_super_secret_and_random_key'
-
-# --- Helper Function to connect to the database ---
-def get_db_connection():
-    conn = sqlite3.connect('passwords.db')
-    # This allows us to access columns by name (like a dictionary)
-    conn.row_factory = sqlite3.Row
-    return conn
-
-# --- Existing Routes (from Part 3) ---
-@app.route('/')
-def home():
-    if 'user_authenticated' in session:
-        # If the session exists, ask for PIN verification instead of a full login
-        return render_template('pin_refresh.html')
-    return render_template('login.html')
-
-@app.route('/login_success')
-def login_success():
-    session['user_authenticated'] = True
-    session['pin_verified'] = True # Mark that the PIN was just verified
-    return redirect(url_for('dashboard'))
-
-@app.route('/logout')
-def logout():
-    session.clear() # Clear all session data
-    return redirect(url_for('home'))
-
-# --- New/Updated Routes for Functionality ---
-@app.route('/dashboard')
-def dashboard():
-    # Protect the dashboard
-    if not session.get('user_authenticated') or not session.get('pin_verified'):
-        return redirect(url_for('home'))
-
-    conn = get_db_connection()
-    # Fetch all passwords from the database
-    passwords = conn.execute('SELECT * FROM passwords').fetchall()
-    conn.close()
-
-    # Pass the list of passwords to the template
-    return render_template('dashboard.html', passwords=passwords)
-
-@app.route('/add_password', methods=['POST'])
-def add_password():
-    if not session.get('user_authenticated'):
-        return redirect(url_for('home'))
-
-    service = request.form['service_name']
-    password = request.form['password_value']
-
-    conn = get_db_connection()
-    conn.execute('INSERT INTO passwords (service_name, password_value) VALUES (?, ?)',
-                 (service, password))
-    conn.commit()
-    conn.close()
-
-    return redirect(url_for('dashboard'))
-
-@app.route('/delete/<int:entry_id>')
-def delete(entry_id):
-    if not session.get('user_authenticated'):
-        return redirect(url_for('home'))
-
-    conn = get_db_connection()
-    conn.execute('DELETE FROM passwords WHERE id = ?', (entry_id,))
-    conn.commit()
-    conn.close()
-    return redirect(url_for('dashboard'))
-
-# --- Route for Handling PIN on Refresh ---
-@app.route('/verify_pin_refresh', methods=['POST'])
-def verify_pin_refresh():
-    submitted_pin = request.form['pin']
-    if submitted_pin == '078123':
-        session['pin_verified'] = True # Re-verify the PIN for this session
-        return redirect(url_for('dashboard'))
-    else:
-        # If the PIN is wrong, log them out for security
-        return redirect(url_for('logout'))
-
+def create_app(config_class=Config):
+    """Application factory"""
+    app = Flask(__name__)
+    app.config.from_object(config_class)
+    
+    # Initialize extensions
+    db.init_app(app)
+    jwt = JWTManager(app)
+    CORS(app, origins=app.config['CORS_ORIGINS'])
+    
+    # Register blueprints
+    app.register_blueprint(auth_bp)
+    app.register_blueprint(file_manager_bp)
+    
+    # Create upload folder if it doesn't exist
+    os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+    
+    # Create database tables
+    with app.app_context():
+        db.create_all()
+    
+    # Web routes (for UI)
+    @app.route('/')
+    def index():
+        """Landing page"""
+        if 'user_id' in session:
+            return redirect(url_for('dashboard'))
+        return redirect(url_for('login_page'))
+    
+    @app.route('/login')
+    def login_page():
+        """Login page"""
+        if 'user_id' in session:
+            return redirect(url_for('dashboard'))
+        return render_template('login.html')
+    
+    @app.route('/register')
+    def register_page():
+        """Registration page"""
+        if 'user_id' in session:
+            return redirect(url_for('dashboard'))
+        return render_template('register.html')
+    
+    @app.route('/dashboard')
+    @login_required
+    def dashboard():
+        """File manager dashboard"""
+        return render_template('dashboard.html')
+    
+    @app.route('/download/client')
+    def download_client():
+        """Serve the FileVault client for download"""
+        client_file = os.path.join(app.config['BASE_DIR'], 'filevault_client.py')
+        if os.path.exists(client_file):
+            return send_file(
+                client_file,
+                as_attachment=True,
+                download_name='filevault_client.py',
+                mimetype='text/x-python'
+            )
+        else:
+            return {'error': 'Client file not found'}, 404
+    
+    @app.route('/install')
+    def install_page():
+        """Installation instructions page"""
+        server_url = request.host_url.rstrip('/')
+        return render_template('install.html', server_url=server_url)
+    
+    # Error handlers
+    @app.errorhandler(404)
+    def not_found(error):
+        return {'error': 'Not found'}, 404
+    
+    @app.errorhandler(500)
+    def internal_error(error):
+        db.session.rollback()
+        return {'error': 'Internal server error'}, 500
+    
+    @app.errorhandler(413)
+    def request_entity_too_large(error):
+        return {'error': 'File too large. Maximum size is 100MB'}, 413
+    
+    return app
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=True)
+    app = create_app()
+    print("File Manager System starting...")
+    print("Access the application at: http://localhost:5000")
+    app.run(debug=True, host='0.0.0.0', port=5000)

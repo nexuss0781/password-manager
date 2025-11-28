@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+
+{% block title %}Install FileVault Client{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="glass-card">
+                <div class="text-center mb-5">
+                    <i class="bi bi-download text-primary" style="font-size: 4rem;"></i>
+                    <h1 class="fw-bold mt-3">FileVault Client</h1>
+                    <p class="lead text-muted">Download and install the CLI client to manage your files from anywhere
+                    </p>
+                </div>
+
+                <!-- Quick Install Section -->
+                <div class="alert alert-info mb-4">
+                    <h4 class="alert-heading"><i class="bi bi-lightning-fill me-2"></i>Quick Install</h4>
+                    <p class="mb-2">Copy and paste one of these commands in your terminal:</p>
+
+                    <h6 class="mt-3">Windows (PowerShell):</h6>
+                    <div class="bg-dark text-light p-3 rounded mb-3" style="font-family: 'Courier New', monospace;">
+                        <code
+                            style="color: #0f0;">Invoke-WebRequest -Uri "{{ server_url }}/download/client" -OutFile "filevault_client.py"</code>
+                        <button class="btn btn-sm btn-outline-light float-end"
+                            onclick="copyToClipboard('Invoke-WebRequest -Uri \'{{ server_url }}/download/client\' -OutFile \'filevault_client.py\'')">
+                            <i class="bi bi-clipboard"></i> Copy
+                        </button>
+                    </div>
+
+                    <h6>Linux/Mac:</h6>
+                    <div class="bg-dark text-light p-3 rounded mb-3" style="font-family: 'Courier New', monospace;">
+                        <code
+                            style="color: #0f0;">curl -O {{ server_url }}/download/client && mv client filevault_client.py</code>
+                        <button class="btn btn-sm btn-outline-light float-end"
+                            onclick="copyToClipboard('curl -O {{ server_url }}/download/client && mv client filevault_client.py')">
+                            <i class="bi bi-clipboard"></i> Copy
+                        </button>
+                    </div>
+
+                    <h6>Or using wget:</h6>
+                    <div class="bg-dark text-light p-3 rounded" style="font-family: 'Courier New', monospace;">
+                        <code style="color: #0f0;">wget {{ server_url }}/download/client -O filevault_client.py</code>
+                        <button class="btn btn-sm btn-outline-light float-end"
+                            onclick="copyToClipboard('wget {{ server_url }}/download/client -O filevault_client.py')">
+                            <i class="bi bi-clipboard"></i> Copy
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Step by Step Guide -->
+                <div class="row mt-5">
+                    <div class="col-md-4 mb-4">
+                        <div class="text-center">
+                            <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
+                                style="width: 60px; height: 60px; font-size: 24px; font-weight: bold;">
+                                1
+                            </div>
+                            <h5>Download Client</h5>
+                            <p class="text-muted">Use one of the commands above to download the client to your computer
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <div class="text-center">
+                            <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
+                                style="width: 60px; height: 60px; font-size: 24px; font-weight: bold;">
+                                2
+                            </div>
+                            <h5>Install Dependencies</h5>
+                            <p class="text-muted">
+                                <code>pip install requests</code>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <div class="text-center">
+                            <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
+                                style="width: 60px; height: 60px; font-size: 24px; font-weight: bold;">
+                                3
+                            </div>
+                            <h5>Start Using</h5>
+                            <p class="text-muted">
+                                <code>python filevault_client.py --help</code>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Usage Examples -->
+                <div class="mt-5">
+                    <h3 class="mb-4"><i class="bi bi-terminal me-2"></i>Usage Examples</h3>
+
+                    <div class="mb-4">
+                        <h6>Login:</h6>
+                        <div class="bg-light p-3 rounded" style="font-family: 'Courier New', monospace;">
+                            <code>python filevault_client.py --server {{ server_url }} login your@email.com password</code>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <h6>Upload files:</h6>
+                        <div class="bg-light p-3 rounded" style="font-family: 'Courier New', monospace;">
+                            <code>python filevault_client.py upload *.pdf</code>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <h6>Upload directory:</h6>
+                        <div class="bg-light p-3 rounded" style="font-family: 'Courier New', monospace;">
+                            <code>python filevault_client.py upload-dir ./my_documents</code>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <h6>List files:</h6>
+                        <div class="bg-light p-3 rounded" style="font-family: 'Courier New', monospace;">
+                            <code>python filevault_client.py list</code>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <h6>Download file:</h6>
+                        <div class="bg-light p-3 rounded" style="font-family: 'Courier New', monospace;">
+                            <code>python filevault_client.py download 123</code>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Direct Download Button -->
+                <div class="text-center mt-5">
+                    <a href="{{ server_url }}/download/client" class="btn btn-primary btn-lg"
+                        download="filevault_client.py">
+                        <i class="bi bi-download me-2"></i>Direct Download
+                    </a>
+                    <p class="text-muted mt-2">Or use the terminal commands above</p>
+                </div>
+
+                <!-- Documentation Links -->
+                <div class="mt-5 text-center">
+                    <h5>Need Help?</h5>
+                    <p>
+                        <a href="https://github.com/yourusername/filevault" class="btn btn-outline-primary me-2">
+                            <i class="bi bi-github me-1"></i> Documentation
+                        </a>
+                        <a href="/" class="btn btn-outline-secondary">
+                            <i class="bi bi-house me-1"></i> Back to Dashboard
+                        </a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function copyToClipboard(text) {
+        navigator.clipboard.writeText(text).then(() => {
+            showToast('Copied to clipboard!', 'success');
+        }).catch(err => {
+            console.error('Failed to copy:', err);
+            showToast('Failed to copy', 'danger');
+        });
+    }
+</script>
+{% endblock %}

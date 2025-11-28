@@ -1,45 +1,102 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secure Login</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+{% extends "base.html" %}
 
-</head>
-<body>
-    <div class="login-container">
-        <!-- Step 1: PIN -->
-        <div id="pin-step" class="login-step active">
-            <h2>Step 1: Enter PIN</h2>
-            <p>Please enter your 6-digit PIN.</p>
-            <input type="password" id="pin" class="form-input" placeholder="PIN" maxlength="6">
-            <button class="form-button" onclick="verifyPin()">Next</button>
-        </div>
+{% block title %}Login - FileVault{% endblock %}
 
-        <!-- Step 2: Password -->
-        <div id="password-step" class="login-step">
-            <h2>Step 2: Enter Password</h2>
-            <p>Please enter your password.</p>
-            <input type="password" id="password" class="form-input" placeholder="Password">
-            <button class="form-button" onclick="verifyPassword()">Next</button>
-        </div>
+{% block content %}
+<div class="auth-container">
+    <div class="container">
+        <div class="row justify-content-center align-items-center min-vh-100">
+            <div class="col-md-5 col-lg-4">
+                <div class="auth-card glass-card">
+                    <div class="text-center mb-4">
+                        <i class="bi bi-cloud-arrow-up-fill text-primary" style="font-size: 3rem;"></i>
+                        <h2 class="fw-bold mt-3">Welcome Back</h2>
+                        <p class="text-muted">Sign in to access your files</p>
+                    </div>
 
-        <!-- Step 3: Puzzle -->
-        <div id="puzzle-step" class="login-step">
-            <h2>Step 3: Solve the Puzzle</h2>
-            <p id="puzzle-instruction">Grab and solve the puzzle to open.</p>
-            <div id="puzzle-container" title="Puzzle">
-                <div class="piece" data-index="0" draggable="true"></div>
-                <div class="piece" data-index="1" draggable="true"></div>
-                <div class="piece" data-index="2" draggable="true"></div>
-                <div class="piece" data-index="3" draggable="true"></div>
+                    <form id="loginForm">
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email Address</label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="bi bi-envelope"></i>
+                                </span>
+                                <input type="email" class="form-control" id="email" name="email"
+                                    placeholder="your@email.com" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="bi bi-lock"></i>
+                                </span>
+                                <input type="password" class="form-control" id="password" name="password"
+                                    placeholder="Enter your password" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="rememberMe" name="remember_me">
+                            <label class="form-check-label" for="rememberMe">
+                                Remember me
+                            </label>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 btn-lg mb-3">
+                            <i class="bi bi-box-arrow-in-right me-2"></i> Sign In
+                        </button>
+                    </form>
+
+                    <div class="text-center">
+                        <p class="text-muted">
+                            Don't have an account?
+                            <a href="/register" class="text-primary fw-semibold">Sign Up</a>
+                        </p>
+                    </div>
+                </div>
             </div>
-            <button id="hidden-submit" class="form-button" onclick="finalLogin()">Submit</button>
         </div>
     </div>
+</div>
+{% endblock %}
 
-    <!-- Link to our JavaScript file -->
-    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
-</body>
-</html>
+{% block extra_js %}
+<script>
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const formData = {
+            email: document.getElementById('email').value,
+            password: document.getElementById('password').value,
+            remember_me: document.getElementById('rememberMe').checked
+        };
+
+        try {
+            const response = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                // Store token in localStorage for API calls
+                localStorage.setItem('access_token', data.access_token);
+
+                // Redirect to dashboard
+                window.location.href = '/dashboard';
+            } else {
+                showToast(data.error || 'Login failed', 'danger');
+            }
+        } catch (error) {
+            console.error('Login error:', error);
+            showToast('An error occurred. Please try again.', 'danger');
+        }
+    });
+</script>
+{% endblock %}
