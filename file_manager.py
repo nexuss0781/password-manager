@@ -1,5 +1,5 @@
 import os
-from flask import Blueprint, request, jsonify, send_file, current_app
+from flask import Blueprint, request, jsonify, send_file, current_app, session
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from werkzeug.utils import secure_filename
 from models import db, User, File, Folder
@@ -124,10 +124,10 @@ def download_file(file_id):
     )
 
 @file_manager_bp.route('/files/list', methods=['GET'])
-@jwt_required()
+@login_required
 def list_files():
     """List all files and folders for the current user"""
-    user_id = get_jwt_identity()
+    user_id = session['user_id']
     folder_id = request.args.get('folder_id', type=int)
     
     # Get files in the specified folder (or root if None)

@@ -1,6 +1,7 @@
+
 {% extends "base.html" %}
 
-{% block title %}Dashboard - FileVault{% endblock %}
+{% block title %}Dashboard - Nexus Project Management System{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -9,20 +10,24 @@
     }
 
     .toolbar {
-        background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(168, 85, 247, 0.1) 100%);
-        backdrop-filter: blur(10px);
+        background: #2c2c2c;
         border-radius: 15px;
         padding: 1.5rem;
         margin-bottom: 2rem;
-        border: 1px solid rgba(255, 255, 255, 0.2);
+        border: 1px solid #444;
     }
 
     .breadcrumb-nav {
-        background: white;
+        background: #2c2c2c;
         padding: 1rem 1.5rem;
         border-radius: 10px;
         margin-bottom: 1.5rem;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        border: 1px solid #444;
+    }
+
+    .breadcrumb-item a {
+        color: #007bff;
+        text-decoration: none;
     }
 
     .file-grid {
@@ -33,13 +38,13 @@
 
     .file-item,
     .folder-item {
-        background: white;
+        background: #2c2c2c;
         border-radius: 12px;
         padding: 1.5rem;
         text-align: center;
         transition: all 0.3s ease;
         cursor: pointer;
-        border: 2px solid transparent;
+        border: 1px solid #444;
         position: relative;
         overflow: hidden;
     }
@@ -47,8 +52,8 @@
     .file-item:hover,
     .folder-item:hover {
         transform: translateY(-5px);
-        box-shadow: 0 10px 30px rgba(99, 102, 241, 0.2);
-        border-color: rgba(99, 102, 241, 0.3);
+        box-shadow: 0 10px 30px rgba(0, 123, 255, 0.2);
+        border-color: #007bff;
     }
 
     .file-icon,
@@ -58,7 +63,7 @@
     }
 
     .folder-icon {
-        color: #fbbf24;
+        color: #ffc107;
     }
 
     .file-name {
@@ -69,7 +74,7 @@
 
     .file-meta {
         font-size: 0.875rem;
-        color: #6b7280;
+        color: #a0a0a0;
     }
 
     .action-buttons {
@@ -86,30 +91,30 @@
     }
 
     .upload-zone {
-        border: 3px dashed rgba(99, 102, 241, 0.3);
+        border: 3px dashed #444;
         border-radius: 15px;
         padding: 3rem 2rem;
         text-align: center;
-        background: linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(168, 85, 247, 0.05) 100%);
+        background: #2c2c2c;
         transition: all 0.3s ease;
         cursor: pointer;
     }
 
     .upload-zone:hover {
-        border-color: rgba(99, 102, 241, 0.6);
-        background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(168, 85, 247, 0.1) 100%);
+        border-color: #007bff;
+        background: #333;
     }
 
     .upload-zone.dragover {
-        border-color: #6366f1;
-        background: linear-gradient(135deg, rgba(99, 102, 241, 0.2) 0%, rgba(168, 85, 247, 0.2) 100%);
+        border-color: #007bff;
+        background: #333;
         transform: scale(1.02);
     }
 
     .empty-state {
         text-align: center;
         padding: 4rem 2rem;
-        color: #9ca3af;
+        color: #a0a0a0;
     }
 
     .empty-state i {
@@ -198,20 +203,22 @@
 <div class="modal fade" id="renameModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">
-                    <i class="bi bi-pencil me-2"></i>Rename
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <input type="text" class="form-control" id="renameInput" placeholder="New name">
-                <input type="hidden" id="renameItemId">
-                <input type="hidden" id="renameItemType">
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" onclick="performRename()">Rename</button>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="bi bi-pencil me-2"></i>Rename
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="text" class="form-control" id="renameInput" placeholder="New name">
+                    <input type="hidden" id="renameItemId">
+                    <input type="hidden" id="renameItemType">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="performRename()">Rename</button>
+                </div>
             </div>
         </div>
     </div>
