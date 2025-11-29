@@ -1,0 +1,43 @@
+
+{% extends "base.html" %}
+
+{% block title %}Documentation - Nexus Project Management System{% endblock %}
+
+{% block content %}
+<div class="documentation-container">
+    <header class="documentation-header">
+        <h1>Documentation</h1>
+    </header>
+
+    <div class="content-section">
+        <h2>User Guide</h2>
+        <p>Welcome to the Nexus Project Management System! This guide will walk you through the essential features of our platform.</p>
+
+        <h4>Dashboard</h4>
+        <p>The dashboard is your central hub for managing files. Here you can upload, download, and delete files with ease.</p>
+
+        <h4>File Upload</h4>
+        <p>To upload a file, simply click the "Upload" button and select the file you want to store. The file will be securely uploaded to your account.</p>
+
+        <h4>File Download</h4>
+        <p>To download a file, click the download icon next to the file name. The file will be saved to your local machine.</p>
+    </div>
+
+    <div class="content-section">
+        <h2>CLI Usage</h2>
+        <p>The Nexus CLI allows you to interact with the file management system from your terminal. To get started, you'll need to download the client and configure it with your credentials.</p>
+
+        <h4>Configuration</h4>
+        <p>First, run the configure command and provide your server URL, username, and password:</p>
+        <pre><code>python nexus_client.py configure</code></pre>
+
+        <h4>Uploading Files</h4>
+        <p>To upload a file, use the upload command followed by the file path:</p>
+        <pre><code>python nexus_client.py upload /path/to/your/file.txt</code></pre>
+
+        <h4>Downloading Files</h4>
+        <p>To download a file, use the download command followed by the file name:</p>
+        <pre><code>python nexus_client.py download your-file.txt</code></pre>
+    </div>
+</div>
+{% endblock %}
